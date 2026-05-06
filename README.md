@@ -40,7 +40,7 @@ $$ Y = R + \gamma \max_{a'} Q(S', a') $$
 - **平均步數 (Average Steps)：** 衡量路徑規劃的效率。透過比較發現，結合了 Double 與 Dueling 結構的模型通常能在隨機起點下展現出最穩定的成功率。
 
 <div align="center">
-  <img src="enhanced_dqn_loss.png" alt="Enhanced DQN Variants Comparison" width="800">
+  <img src="enhanced_dqn_loss.png" alt="Enhanced DQN Variants Comparison" width="600">
   <br>
   <i>圖 2: 三種增強型 DQN 變體之訓練損失平滑曲線比較 (Player 模式)</i>
 </div>
