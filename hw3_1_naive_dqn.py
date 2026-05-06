@@ -99,7 +99,16 @@ def train():
         if (i+1) % 100 == 0:
             print(f"Epoch {i+1}/{epochs} completed. Avg Loss: {np.mean(losses[-100:]) if losses else 0:.4f}")
             
-    print("Training finished!")
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10,5))
+    plt.plot(losses)
+    plt.title("Naive DQN Training Loss (Static Mode)")
+    plt.xlabel("Training Steps")
+    plt.ylabel("MSE Loss")
+    plt.savefig("naive_dqn_loss.png")
+    plt.close()
+    
+    print("Training finished! Loss curve saved to naive_dqn_loss.png")
     return model
 
 if __name__ == "__main__":

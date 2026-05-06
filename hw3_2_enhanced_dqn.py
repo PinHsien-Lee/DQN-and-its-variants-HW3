@@ -143,7 +143,7 @@ def train_enhanced_dqn(use_dueling=True, use_double=True):
             print(f"Epoch {i+1}/{epochs} completed. Avg Loss: {np.mean(losses[-150:]) if losses else 0:.4f}")
             
     print("Training finished!\n")
-    return model
+    return model, losses
 
 def test_model(model, episodes=50):
     model.eval()
@@ -180,20 +180,43 @@ def test_model(model, episodes=50):
     return success_rate, avg_steps
 
 if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    
     print("--- 1. Double DQN (Standard Net) ---")
-    model_double = train_enhanced_dqn(use_dueling=False, use_double=True)
+    model_double, losses_double = train_enhanced_dqn(use_dueling=False, use_double=True)
     sr_double, steps_double = test_model(model_double)
     print(f"[*] Double DQN Evaluation -> Success Rate: {sr_double:.1f}%, Avg Steps: {steps_double:.1f}\n")
     
     print("--- 2. Dueling DQN (Standard DQN update) ---")
-    model_dueling = train_enhanced_dqn(use_dueling=True, use_double=False)
+    model_dueling, losses_dueling = train_enhanced_dqn(use_dueling=True, use_double=False)
     sr_dueling, steps_dueling = test_model(model_dueling)
     print(f"[*] Dueling DQN Evaluation -> Success Rate: {sr_dueling:.1f}%, Avg Steps: {steps_dueling:.1f}\n")
     
     print("--- 3. Dueling Double DQN ---")
-    model_dueling_double = train_enhanced_dqn(use_dueling=True, use_double=True)
+    model_dueling_double, losses_dueling_double = train_enhanced_dqn(use_dueling=True, use_double=True)
     sr_dueling_double, steps_dueling_double = test_model(model_dueling_double)
     print(f"[*] Dueling Double DQN Evaluation -> Success Rate: {sr_dueling_double:.1f}%, Avg Steps: {steps_dueling_double:.1f}\n")
+    
+    # Plotting
+    plt.figure(figsize=(12, 6))
+    
+    # Calculate moving average to smooth the plot (since DQN loss is very noisy)
+    def moving_average(a, n=100):
+        ret = np.cumsum(a, dtype=float)
+        ret[n:] = ret[n:] - ret[:-n]
+        return ret[n - 1:] / n
+
+    plt.plot(moving_average(losses_double), label='Double DQN', alpha=0.8)
+    plt.plot(moving_average(losses_dueling), label='Dueling DQN', alpha=0.8)
+    plt.plot(moving_average(losses_dueling_double), label='Dueling Double DQN', alpha=0.8)
+    
+    plt.title("Enhanced DQN Variants Training Loss (Smoothed)")
+    plt.xlabel("Training Steps")
+    plt.ylabel("MSE Loss")
+    plt.legend()
+    plt.savefig("enhanced_dqn_loss.png")
+    plt.close()
+    print("Saved comparison plot to enhanced_dqn_loss.png")
     
     print("====================================")
     print("         Comparison Summary         ")

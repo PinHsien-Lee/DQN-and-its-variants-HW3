@@ -19,6 +19,12 @@ $$ Y = R + \gamma \max_{a'} Q(S', a') $$
 - **採樣方式：** 網路不再直接學習最新的一筆轉移紀錄，而是改為每次從回放池中隨機抽取一個小批次（例如 200 筆紀錄）來進行訓練。
 - **優勢與好處：** 這種做法打破了訓練樣本之間的時間相關性，並允許神經網路重複從過去的經驗中學習，大幅提升了樣本的使用效率，也讓訓練的 Loss 曲線變得更加穩定。
 
+<div align="center">
+  <img src="naive_dqn_loss.png" alt="Naive DQN Training Loss" width="600">
+  <br>
+  <i>圖 1: Naive DQN 訓練損失曲線 (Static 模式)</i>
+</div>
+
 ---
 
 ## 2. HW3-2: 增強型 DQN 變體 (Player 模式)
@@ -33,6 +39,12 @@ $$ Y = R + \gamma \max_{a'} Q(S', a') $$
 - **成功率 (Success Rate)：** 衡量模型導航至目標的能力。
 - **平均步數 (Average Steps)：** 衡量路徑規劃的效率。透過比較發現，結合了 Double 與 Dueling 結構的模型通常能在隨機起點下展現出最穩定的成功率。
 
+<div align="center">
+  <img src="enhanced_dqn_loss.png" alt="Enhanced DQN Variants Comparison" width="800">
+  <br>
+  <i>圖 2: 三種增強型 DQN 變體之訓練損失平滑曲線比較 (Player 模式)</i>
+</div>
+
 ---
 
 ## 3. HW3-3: 結合訓練技巧的 Keras DQN (Random 模式)
@@ -41,3 +53,9 @@ $$ Y = R + \gamma \max_{a'} Q(S', a') $$
 
 1. **學習率排程 (Learning Rate Scheduling)：** 引入了 `ExponentialDecay` 排程器。這能讓學習率隨著訓練的進行從 `1e-3` 開始逐步遞減，確保模型在訓練初期能大步探索，而在訓練後期能小步微調，達成更平穩的收斂。
 2. **梯度裁剪 (Gradient Clipping)：** 在 Adam 優化器中加入了 `clipnorm=1.0` 來限制梯度的最大範數。在隨機生成的網格環境中，模型很容易突然遭遇意料之外的 TD-error（例如：剛好出生在陷阱旁邊）；梯度裁剪可以有效防止這些極端情況引發的梯度爆炸，進而保護神經網路的權重不被破壞。
+
+<div align="center">
+  <img src="keras_dqn_loss.png" alt="Keras DQN Training Loss" width="600">
+  <br>
+  <i>圖 3: Keras DQN 訓練損失平滑曲線 (Random 模式)</i>
+</div>

@@ -127,7 +127,25 @@ def train_keras_dqn():
             print(f"Epoch {i+1}/{epochs} - Avg Loss: {avg_loss:.4f} - LR: {curr_lr:.6f} - Epsilon: {epsilon:.2f}")
 
     print("Keras Training Finished!")
-    return model
+    return model, losses
 
 if __name__ == "__main__":
-    trained_model = train_keras_dqn()
+    import matplotlib.pyplot as plt
+    trained_model, losses = train_keras_dqn()
+    
+    plt.figure(figsize=(10,5))
+    
+    def moving_average(a, n=100):
+        ret = np.cumsum(a, dtype=float)
+        ret[n:] = ret[n:] - ret[:-n]
+        return ret[n - 1:] / n
+
+    plt.plot(moving_average(losses), label='Keras DQN Loss')
+    plt.title("Keras DQN Training Loss (Random Mode, Smoothed)")
+    plt.xlabel("Training Steps")
+    plt.ylabel("MSE Loss")
+    plt.legend()
+    plt.savefig("keras_dqn_loss.png")
+    plt.close()
+    
+    print("Saved training loss plot to keras_dqn_loss.png")
