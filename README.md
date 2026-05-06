@@ -59,3 +59,20 @@ $$ Y = R + \gamma \max_{a'} Q(S', a') $$
   <br>
   <i>圖 3: Keras DQN 訓練損失平滑曲線 (Random 模式)</i>
 </div>
+
+---
+
+## 4. HW3-4: 加分題 - Rainbow DQN (Mini-Rainbow) 解 Random 模式
+
+為了挑戰最困難的 `Random` 模式（玩家、目標、陷阱、牆壁全隨機），我們實作了 **Mini-Rainbow DQN**。這套架構結合了四種強化學習的經典改進，能大幅提升在極端隨機環境下的收斂穩定性與學習效率：
+
+1. **Double DQN (雙重網路)**：利用 Online Network 選擇動作，Target Network 評估價值，解決 Q 值過度估計 (Overestimation) 的問題。
+2. **Dueling DQN (決鬥網路)**：將神經網路拆分為 `Value` (狀態價值) 和 `Advantage` (動作優勢)，讓模型能更快認出「危險的狀態」（例如靠近陷阱）。
+3. **Prioritized Experience Replay (PER, 優先經驗回放)**：取代隨機抽樣，PER 優先訓練那些 `TD-error`（預測誤差）最大的經驗。這在隨機地圖中非常關鍵，能讓模型聚焦學習那些最意想不到的困難開局（例如出生在陷阱旁）。
+4. **N-step Learning (多步學習)**：在計算目標 Q 值時，往前看 N 步（實作中 `N=3`），讓成功或失敗的獎勵能更快地反向傳播回前面的路徑，大幅加速學習。
+
+<div align="center">
+  <img src="rainbow_dqn_loss.png" alt="Rainbow DQN Training Loss" width="600">
+  <br>
+  <i>圖 4: Mini-Rainbow DQN 訓練損失平滑曲線 (Random 模式)</i>
+</div>
